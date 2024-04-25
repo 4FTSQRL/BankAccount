@@ -12,6 +12,9 @@ import sqlite3
 
 # Main Function for testing
 def main():
+    filePath = getFilePath()
+    print(createDatabase(filePath))
+    addAccount(filePath, "Joey Ma", "qwerty", 100)
     # Return Statement
     return 0
 
@@ -51,12 +54,13 @@ def createDatabase(databasePath):
             id  INTEGER PRIMARY KEY,
             name    TEXT NOT NULL,
             password    TEXT NOT NULL,
-            balance INTEGER NOT NULL
-        )
+            balance INTEGER
+        );
         """
         
         # Execute and close
         cur.execute(accountQuery)
+        con.commit()
         con.close()
         # Tell user it was a success
         print("Database successfully created.")
@@ -87,3 +91,7 @@ def addAccount(databasePath, name, password, balance):
     
     # Tell user the account was added.
     print("Account successfully added.")
+    
+# Python Incantation
+if __name__ == "__main__":
+    main()
