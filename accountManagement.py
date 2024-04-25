@@ -12,6 +12,8 @@ import createAccounts
 
 # Main Function for Testing
 def main():
+    logIn("Joey Ma", "qwerty")
+    deleteAccount("Joey Ma", "qwerty")
     return 0
 
 # Log In Function
@@ -32,9 +34,12 @@ def logIn(name, password):
     # Cursor
     cur = con.cursor()
     # Get the password of the account holder
-    cur.execute("SELECT password FROM acconuts WHERE name = ?", (name,))
+    cur.execute("SELECT password FROM accounts WHERE name = ?", (name,))
     # Fetch the password
-    pswd = cur.fetchone()
+    passw = cur.fetchone()
+    # Make a string
+    pswd = str(passw[0])
+    
     # See if it is the same
     if pswd == password:
         # Print success statement
@@ -44,7 +49,7 @@ def logIn(name, password):
         # Fetch thr balance
         balance = cur.fetchone()
         # Return the balance
-        return balance
+        return int(balance[0])
     # If the passwords are not the same, do not log in
     else:
         # Print failure.
@@ -55,6 +60,38 @@ def logIn(name, password):
     # Close the connection
     con.close()
     
+# Delete Account Function
+def deleteAccount(name, password):
+    """Deletes account
+
+    Args:
+        name (string): user name for the account
+        password (string): password for the account
+    """
+    # Log in
+    status = logIn(name, password)
+    
+    # Make sure the log in was successful
+    if status != None:
+        # Get the database path
+        databasePath = createAccounts.getFilePath()
+        # Create a connection
+        con = sqlite3.connect(databasePath)
+        # Create cursor
+        cur = con.cursor()
+        # Delete the account
+        cur.execute("DELETE FROM accounts WHERE name = ?", (name,))
+        # Commit and close
+        con.commit()
+        con.close()
+        # Let user know
+        print("Account successfully deleted.")
+        
+    # Else
+    else:
+        # Print a failure message
+        print("Login unsucessful. Account not deleted.")
+        
 # Python Incantation
 if __name__ == "__main__":
     main()
